@@ -17,7 +17,7 @@ class PropertyOffer(models.Model):
         "estate.property", string="Properties", required=True
     )
 
-    validity = fields.Integer(string="Validity (days)", default=7, copy=False, required=True)            
+    validity = fields.Integer(string="Validity (days)", default=7)            
     date_deadline = fields.Date(string="Deadline", compute="_compute_date_deadline", inverse="_inverse_date_deadline")
     @api.depends('create_date', 'validity')
     def _compute_date_deadline(self):
