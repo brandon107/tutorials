@@ -7,6 +7,11 @@ class PropertyOffer(models.Model):
     _description = "Property offer model for the estate module."
 
     price = fields.Float()
+
+    _check_price = models.Constraint(
+        "CHECK(price > 0)",
+        "The offer price must be positive!",
+    )
     status = fields.Selection(
         copy=False,
         selection=[('accepted', 'Accepted'), ('refused', 'Refused')]
@@ -15,7 +20,7 @@ class PropertyOffer(models.Model):
         "res.partner", string="Partner", required=True
     )
     property_id = fields.Many2one(
-        "estate.property", string="Properties", required=True
+        "estate.property", string="Properties", required=True, ondelete="cascade"
     )
 
     validity = fields.Integer(string="Validity (days)", default=7)            
@@ -42,14 +47,14 @@ class PropertyOffer(models.Model):
             else:
                 record.property_id.state = 'oaccepted'
                 record.property_id.selling_price = record.price
-                record.property_id.partner_id = record.partner_id
+                record.property_id.buyer_id = record.partner_id
         return True
     
     def action_refuse(self):
         for record in self:
-            if record.status == 'accepted':
+            if record.status == 'oaccepted':
                 record.property_id.state = 'oreceived'
                 record.property_id.selling_price = 0
-                record.property_id.partner_id = False
+                record.property_id.buyer_id = False
             record.status = 'refused'
         return True

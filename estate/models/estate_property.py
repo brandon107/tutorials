@@ -33,6 +33,7 @@ class Property(models.Model):
     state = fields.Selection(
         string='Status',
         selection=[('new', 'New'), ('oreceived', 'Offer Received'), ('oaccepted', 'Offer Accepted'), ('sold', 'Sold'), ('cancelled', 'Cancelled')],
+        readonly=True,
         required=True,
         copy=False,
         default='new'
@@ -94,4 +95,13 @@ class Property(models.Model):
             else:
                 record.state = 'cancelled'
         return True
+
+    _check_expected_price = models.Constraint(
+        "CHECK(expected_price > 0)",
+        "The expected price must be strictly positive!",
+    )
+    _check_selling_price = models.Constraint(
+        "CHECK(selling_price >= 0)",
+        "The selling price must be positive!",
+    )
 
