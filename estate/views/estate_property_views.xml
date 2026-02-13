@@ -49,6 +49,7 @@
                 <header>
                     <button name="action_sold" type="object" string="Sold"/>
                     <button name="action_cancel" type="object" string="Cancel"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,oreceived,oaccepted,sold,cancelled"/>
                 </header>
 
                 <sheet>
@@ -56,14 +57,13 @@
                         <h1>
                             <field name="name"/>
                         </h1>
-                        <field name="tag_ids" widget="many2many_tags"/>
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     </div>
                     <br/>
 
                     <group>
                         <group>
-                            <field name="state"/>
-                            <field name="property_type_id"/>
+                            <field name="property_type_id" options="{'no_create': true}"/>
                             <field name="postcode"/>
                             <field name="date_availability"/>
                         </group>

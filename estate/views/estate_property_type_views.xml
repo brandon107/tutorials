@@ -10,6 +10,7 @@
         <field name="model">estate.property.type</field>
         <field name="arch" type="xml">
             <list string="Tests">
+                <field name="sequence" widget="handle"/>
                 <field name="name"/>   
             </list>
         </field>
@@ -36,6 +37,14 @@
                             <field name="name"/>
                         </h1>
                     </div>
+
+                    <field name="property_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="expected_price"/>
+                            <field name="state"/>
+                        </list> 
+                    </field>
                 </sheet>
             </form>
         </field>
