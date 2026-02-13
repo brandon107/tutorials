@@ -1,6 +1,8 @@
 from odoo import api, fields, models
 from dateutil.relativedelta import relativedelta
 from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
+from odoo.tools.float_utils import float_compare, float_is_zero
 
 class Property(models.Model):
     _name = "estate.property"
@@ -84,6 +86,8 @@ class Property(models.Model):
         for record in self:
             if record.state == 'cancelled':
                 raise UserError("Cancelled properties cannot be sold.")
+            elif record.state == 'sold':
+                raise UserError("This property is already sold.")
             else:
                 record.state = 'sold'
         return True
@@ -92,6 +96,8 @@ class Property(models.Model):
         for record in self:
             if record.state == 'sold':
                 raise UserError("Sold properties cannot be cancelled.")
+            elif record.state == 'cancelled':
+                raise UserError("This property is already cancelled.")
             else:
                 record.state = 'cancelled'
         return True
@@ -105,3 +111,9 @@ class Property(models.Model):
         "The selling price must be positive!",
     )
 
+    @api.constrains('selling_price', 'expected_price')
+    def _check_selling_expected_price(self):
+        for record in self:
+            if (not float_is_zero(record.selling_price, precision_digits=2)
+                    and float_compare(record.selling_price, 0.9 * record.expected_price, precision_digits=2) < 0):
+                raise ValidationError("The selling price must be at least 90% of the expected price.")
